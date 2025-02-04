@@ -851,6 +851,183 @@ export const templates = [
   *   **Security**: If you implement server-side conversion, ensure your API endpoint is secure and handles file uploads safely.
   *   **Performance**: DOCX conversion can be resource-intensive, especially for large files. Optimize your conversion logic and consider using background tasks or workers for server-side processing.
 
+**Part 5: Implementing DOCX Export Functionality**
+
+This section covers the implementation of DOCX export capabilities, allowing users to save their documents in DOCX format.
+
+**10. Install HTML to DOCX Conversion Library**
+
+Install the `html-docx-js` library using bun:
+
+```bash
+bun add html-docx-js
+```
+
+**11. Create `docxExport.ts` Utility**
+
+Create a new file `src/utils/docxExport.ts` to handle the HTML to DOCX conversion:
+
+```typescript
+import htmlDocx from 'html-docx-js'
+
+interface DocxExportOptions {
+  orientation?: 'portrait' | 'landscape'
+  margins?: {
+    top?: number
+    right?: number
+    bottom?: number
+    left?: number
+  }
+}
+
+/**
+ * Converts HTML content to a DOCX file
+ * @param htmlContent - The HTML string to convert
+ * @param options - Optional configuration for the DOCX output
+ * @returns Promise resolving with a Blob containing the DOCX file
+ */
+export const exportHtmlToDocx = async (
+  htmlContent: string,
+  options: DocxExportOptions = {}
+): Promise<Blob> => {
+  try {
+    // Sanitize and prepare HTML content
+    const sanitizedHtml = htmlContent.trim()
+    
+    if (!sanitizedHtml) {
+      throw new Error('HTML content cannot be empty')
+    }
+
+    // Configure conversion options
+    const convertOptions = {
+      orientation: options.orientation || 'portrait',
+      margins: {
+        top: options.margins?.top || 1440,    // 1 inch in twips
+        right: options.margins?.right || 1440,
+        bottom: options.margins?.bottom || 1440,
+        left: options.margins?.left || 1440
+      }
+    }
+
+    // Convert HTML to DOCX format
+    const docxContent = htmlDocx.asBlob(sanitizedHtml, convertOptions)
+
+    return new Blob([docxContent], {
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to convert HTML to DOCX: ${error.message}`)
+    }
+    throw new Error('An unexpected error occurred during DOCX conversion')
+  }
+}
+
+/**
+ * Helper function to trigger immediate download of the DOCX file
+ * @param blob - The DOCX file as a Blob
+ * @param filename - The name for the downloaded file
+ */
+export const downloadDocx = (blob: Blob, filename: string): void => {
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename.endsWith('.docx') ? filename : `${filename}.docx`
+  
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
+}
+```
+
+**12. Create Export Button Component**
+
+Create a new file `src/components/menus/toolbar/export/word.vue` to add the DOCX export button to your toolbar:
+
+```vue
+<template>
+  <menus-button 
+    text="Word" 
+    ico="word" 
+    huge 
+    :loading="isExporting"
+    @click="handleExport" 
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useStore } from '@/composables/store'
+import { exportHtmlToDocx, downloadDocx } from '@/utils/docxExport'
+
+const store = useStore()
+const isExporting = ref(false)
+
+const handleExport = async () => {
+  if (!store.editor.value || isExporting.value) return
+  
+  isExporting.value = true
+  try {
+    // Get current editor content as HTML
+    const htmlContent = store.editor.value.getHTML()
+    
+    // Configure export options based on current page settings
+    const exportOptions = {
+      orientation: store.page.value.orientation,
+      margins: {
+        top: store.page.value.margin?.top,
+        right: store.page.value.margin?.right,
+        bottom: store.page.value.margin?.bottom,
+        left: store.page.value.margin?.left
+      }
+    }
+
+    // Convert HTML to DOCX
+    const docxBlob = await exportHtmlToDocx(htmlContent, exportOptions)
+
+    // Generate filename from document title or use default
+    const filename = store.options.value.document?.title || 'document'
+
+    // Trigger download
+    downloadDocx(docxBlob, filename)
+  } catch (error) {
+    console.error('Failed to export document:', error)
+    // Here you might want to show a notification to the user
+    // using your app's notification system
+  } finally {
+    isExporting.value = false
+  }
+}
+</script>
+```
+
+**13. Test DOCX Export**
+
+1. Run your frontend development server (`bun dev`).
+2. Navigate to your editor and create or edit a document.
+3. Click the Word export button in the toolbar.
+4. Verify that the document downloads as a DOCX file.
+5. Open the downloaded file in Microsoft Word or another compatible application to verify the formatting.
+
+**14. Error Handling and UI Feedback**
+
+The export implementation includes:
+- Loading state indicator during export
+- Error handling for conversion failures
+- Proper cleanup of temporary URLs and DOM elements
+- Validation of HTML content before conversion
+
+**Important Export Considerations:**
+
+* **Client-Side Export**: This implementation uses client-side conversion with `html-docx-js`. For complex documents or production environments, consider:
+  * Server-side conversion for better formatting fidelity
+  * Progress indicators for large documents
+  * Batch export capabilities for multiple documents
+* **Format Compatibility**: Test exported documents with different versions of Word and other DOCX readers
+* **Performance**: Large documents with many images or complex formatting may require optimization
+* **Error Handling**: Implement user-friendly error messages and fallback options for failed conversions
+
 **5. Update `TemplateGallery.vue` to include "Upload" template**
 
 Modify `src/components/TemplateGallery.vue` to include an "Upload Document" template option in your template gallery.
