@@ -1,19 +1,21 @@
 <template>
   <menus-button 
-    text="Word" 
+    :text="t('export.word')"
     ico="word" 
     huge 
     :loading="isExporting"
-    @click="handleExport" 
+    @menu-click="handleExport" 
   />
 </template>
 
 <script setup lang="ts">
 import { ref } from '@vue/reactivity'
 import { useStore } from '@/composables/store'
+import { useI18n } from 'vue-i18n'
 import { exportHtmlToDocx, downloadDocx } from '@/utils/docxExport'
 
 const store = useStore()
+const { t } = useI18n()
 const isExporting = ref(false)
 
 const handleExport = async () => {

@@ -88,10 +88,24 @@ export default defineConfig({
     ...Object.values(vuePlugins),
   ],
   css: cssConfig,
-  build: buildConfig,
+  build: {
+    ...buildConfig,
+    commonjsOptions: {
+      include: [/html-to-docx/, /xmlbuilder2/, /node_modules/],
+      transformMixedEsModules: true
+    }
+  },
+  optimizeDeps: {
+    exclude: ['html-to-docx'],
+    include: ['xmlbuilder2'],
+    esbuildOptions: {
+      target: 'es2020'
+    }
+  },
   resolve: {
     alias: {
       '@': `${process.cwd()}/src`,
+      //'html-to-docx': 'html-to-docx/lib/index.js'
     },
   },
 })

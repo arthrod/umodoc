@@ -5,8 +5,8 @@ import { createI18n } from 'vue-i18n'
 import type { SupportedLocale } from '@/types'
 
 import en_US from './locales/en-US.json'
-import ru_RU from './locales/ru-RU.json'
 import zh_CN from './locales/zh-CN.json'
+import ru_RU from './locales/ru-RU.json'
 
 const { options } = useStore()
 

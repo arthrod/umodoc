@@ -857,10 +857,10 @@ This section covers the implementation of DOCX export capabilities, allowing use
 
 **10. Install HTML to DOCX Conversion Library**
 
-Install the `html-docx-js` library using bun:
+Install the `html-to-docx` library using bun:
 
 ```bash
-bun add html-docx-js
+bun add html-to-docx
 ```
 
 **11. Create `docxExport.ts` Utility**
@@ -868,7 +868,11 @@ bun add html-docx-js
 Create a new file `src/utils/docxExport.ts` to handle the HTML to DOCX conversion:
 
 ```typescript
-import htmlDocx from 'html-docx-js'
+import HTMLtoDOCX from 'html-to-docx'
+// Instead of: import htmlDocx from 'html-docx-js'
+
+// Usage:
+const docxBuffer = await HTMLtoDOCX(htmlString, options)
 
 interface DocxExportOptions {
   orientation?: 'portrait' | 'landscape'
