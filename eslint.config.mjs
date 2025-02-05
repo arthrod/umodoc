@@ -7,6 +7,7 @@ import eslintPluginUnusedImports from 'eslint-plugin-unused-imports'
 import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 import eslintTS from 'typescript-eslint'
+import pluginVitest from '@vitest/eslint-plugin'
 
 function createAutoImportedGlobals() {
   // Read the content of the files synchronously
@@ -160,5 +161,12 @@ export default [
   //     '@typescript-eslint/no-useless-constructor': 'off', // Changed to "off" for tests
   //   },
   // },
+  {
+    files: [
+      '**/*.{spec,test}.{ts,tsx}',
+      '**/{tests,test,__tests__,__mock__,__mocks__}/*.{ts,tsx}',
+    ],
+    ...pluginVitest.configs.recommended,
+  },
   eslintConfigPrettier,
 ]
