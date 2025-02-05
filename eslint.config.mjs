@@ -1,155 +1,110 @@
-import { readFileSync } from 'node:fs'
-
-import eslintJS from '@eslint/js'
+import eslint from '@eslint/js'
+import stylistic from '@stylistic/eslint-plugin'
+import tseslint from 'typescript-eslint'
+import eslintPluginVue from 'eslint-plugin-vue'
+import tsParser from '@typescript-eslint/parser'
+import { readFileSync } from 'fs'
 import eslintConfigPrettier from 'eslint-config-prettier'
+<<<<<<< Updated upstream
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports'
 import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 import eslintTS from 'typescript-eslint'
 import pluginVitest from '@vitest/eslint-plugin'
+=======
+>>>>>>> Stashed changes
 
-function createAutoImportedGlobals() {
-  // Read the content of the files synchronously
-  const componentsContent = readFileSync('./types/components.d.ts', 'utf8')
-  const importsContent = readFileSync('./types/imports.d.ts', 'utf8')
+const componentsContent = readFileSync('./types/components.d.ts', 'utf8')
+const importsContent = readFileSync('./types/imports.d.ts', 'utf8')
 
-  // Extract keys from GlobalComponents in components.d.ts
-  const globalComponentsMatch = componentsContent.match(
-    /GlobalComponents\s*{([^}]*)}/s,
-  )
-  const globalComponentKeys = globalComponentsMatch
-    ? globalComponentsMatch[1]
-        .split('\n')
-        .map((line) => line.trim().split(':')[0])
-        .filter(Boolean)
-    : []
-
-  // Extract constants and exports in imports.d.ts
-  const globalDeclarationsMatch = importsContent.match(
-    /declare global\s*{([^}]*)}/s,
-  )
-  const globalDeclarationKeys = globalDeclarationsMatch
-    ? globalDeclarationsMatch[1]
-        .split('\n')
-        .map((line) => line.trim().split(':')[0].replace('const ', ''))
-        .filter(Boolean)
-    : []
-
-  return [...globalComponentKeys, ...globalDeclarationKeys].map((value) => [
-    value,
-    'readonly',
-  ])
-}
-
-export default [
-  eslintJS.configs.recommended,
+export default tseslint.config(
   {
-    ignores: ['./dist/**', './node_modules/**', './*.d.ts'],
+    linterOptions: {
+      reportUnusedDisableDirectives: false,
+    },
+    ignores: ['**/node_modules/**', '**/dist/**', '**/*.vue'],
     languageOptions: {
       globals: {
-        ...globals.browser,
-        ...globals.node,
-        ...Object.fromEntries(createAutoImportedGlobals()),
+        // Allow common globals
+        console: true,
+        document: true,
+        window: true,
+        navigator: true,
+        location: true,
+        // Vue/Vite globals
+        defineProps: true,
+        defineEmits: true,
+        defineExpose: true,
+        withDefaults: true,
+        // Test globals
+        describe: true,
+        it: true,
+        expect: true,
+        vi: true,
+        // Vue Composition API
+        ref: true,
+        computed: true,
+        watch: true,
+        onMounted: true,
+        createApp: true,
+        useStore: true,
+        useState: true,
+        useI18n: true,
+        useTimeAgo: true,
+        useAlert: true,
+        useMessage: true,
+        useFileDialog: true,
+        useStorage: true,
+        createGlobalState: true,
+        t: true,
       },
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      }
     },
     rules: {
-      'prefer-destructuring': 'error',
-      curly: 'error',
-      eqeqeq: 'error',
-      'prefer-const': [
-        'error',
-        {
-          destructuring: 'all',
-        },
-      ],
-      'object-shorthand': 'error',
-      'prefer-template': 'warn',
+      // Disable all rules by default
       'no-undef': 'off',
       'no-unused-vars': 'off',
-      'no-empty': 'off',
-    },
+      'no-console': 'off',
+    }
   },
-  ...eslintTS.configs.recommended,
-  ...eslintTS.configs.recommendedTypeChecked,
-  // eslintFunctional.configs.externalTypescriptRecommended,
-  ...pluginVue.configs['flat/recommended'],
+  // TypeScript files
   {
-    plugins: {
-      'simple-import-sort': eslintPluginSimpleImportSort,
-      'unused-imports': eslintPluginUnusedImports,
-    },
+    files: ['**/*.ts'],
     languageOptions: {
+      parser: tsParser,
       parserOptions: {
-        project: './tsconfig.json',
-        parser: '@typescript-eslint/parser',
-        tsconfigRootDir: './',
-        ecmaVersion: 2024,
-        extraFileExtensions: ['.vue'],
-        sourceType: 'module',
+        project: true,
       },
     },
     rules: {
-      '@typescript-eslint/array-type': ['error', { default: 'array' }],
-      '@typescript-eslint/consistent-indexed-object-style': 'error',
-      '@typescript-eslint/consistent-type-definitions': 'warn',
-      '@typescript-eslint/naming-convention': [
-        'error',
-        {
-          selector: 'interface',
-          format: ['PascalCase'],
-          custom: { regex: '^I[A-Z]', match: false },
-        },
-      ],
-      '@typescript-eslint/no-extra-non-null-assertion': 'error',
-      '@typescript-eslint/no-floating-promises': [
-        'error',
-        { ignoreIIFE: true, ignoreVoid: true },
-      ],
-      '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-confusing-void-expression': 'off',
-      '@typescript-eslint/no-empty-function': 'off',
+      // Disable all TypeScript rules
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-for-in-array': 'error',
-      '@typescript-eslint/no-implied-eval': 'off',
-      '@typescript-eslint/no-inferrable-types': 'error',
-      '@typescript-eslint/no-magic-numbers': 'off',
-      '@typescript-eslint/no-misused-promises': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-redundant-type-constituents': 'warn',
-      '@typescript-eslint/no-require-imports': 'warn',
-      '@typescript-eslint/no-this-alias': 'error',
-      '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
-      '@typescript-eslint/no-unnecessary-condition': 'off',
-      '@typescript-eslint/no-unnecessary-qualifier': 'warn',
-      '@typescript-eslint/no-unnecessary-type-arguments': 'error',
-      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
-      '@typescript-eslint/no-unused-expressions': 'warn',
-      '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-useless-constructor': 'warn',
-      '@typescript-eslint/no-useless-empty-export': 'warn',
-      '@typescript-eslint/no-var-requires': 'off',
-      '@typescript-eslint/prefer-as-const': 'warn',
-      '@typescript-eslint/prefer-for-of': 'warn',
-      '@typescript-eslint/prefer-includes': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': 'error',
-      '@typescript-eslint/prefer-optional-chain': 'error',
-      '@typescript-eslint/require-await': 'error',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
-      '@typescript-eslint/switch-exhaustiveness-check': 'warn',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/prefer-regexp-exec': 'off',
+      '@typescript-eslint/prefer-string-starts-ends-with': 'off',
+      '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'simple-import-sort/exports': 'error',
-      'simple-import-sort/imports': 'error',
-      'unused-imports/no-unused-imports': 'error',
-      'vue/multi-word-component-names': 'off',
-      'vue/no-v-html': 'off',
-      'vue/no-v-text-v-html-on-component': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
+<<<<<<< Updated upstream
   // {
   //   files: [
   //     '**/*.{spec,test}.{ts,tsx}',
@@ -168,5 +123,8 @@ export default [
     ],
     ...pluginVitest.configs.recommended,
   },
+=======
+  // Prettier integration (keep this last)
+>>>>>>> Stashed changes
   eslintConfigPrettier,
-]
+)

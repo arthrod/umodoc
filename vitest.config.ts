@@ -21,6 +21,9 @@ const testConfig = defineConfig({
         return false
       }
     },
+    deps: {
+      inline: ['mammoth', 'docx']
+    }
   },
 })
 

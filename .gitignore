@@ -41,6 +41,7 @@ types/components.d.ts
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+bun.lock
 
 # Other
 .DS_Store

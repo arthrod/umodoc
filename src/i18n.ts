@@ -1,6 +1,8 @@
 import { isRecord } from '@tool-belt/type-predicates'
 import { merge } from 'ts-deepmerge'
 import { createI18n } from 'vue-i18n'
+import { useStore } from '@/composables/store'
+import { debugReadability } from '@/utils/logger'
 
 import type { SupportedLocale } from '@/types'
 
@@ -8,13 +10,16 @@ import en_US from './locales/en-US.json'
 import zh_CN from './locales/zh-CN.json'
 import ru_RU from './locales/ru-RU.json'
 
-const { options } = useStore()
+const store = useStore()
+const { options } = store
 
 const getLocale = (lang: SupportedLocale) => {
   const translations = options.value.translations?.[lang]
   if (isRecord(translations)) {
+    debugReadability('i18n', 'customTranslations', { lang })
     return translations
   }
+  debugReadability('i18n', 'defaultTranslations', { lang })
   return {}
 }
 
