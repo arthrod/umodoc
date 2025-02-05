@@ -1,6 +1,6 @@
 # Node modules
 node_modules/
-.npmrc
+
 # Build output
 dist/
 package/
@@ -41,7 +41,6 @@ types/components.d.ts
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
-bun.lock
 
 # Other
 .DS_Store
