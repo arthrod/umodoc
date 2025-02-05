@@ -62,7 +62,6 @@
 </template>
 <script setup lang="ts">
 import { TextSelection } from '@tiptap/pm/state'
-import { useStore } from '@/composables/store'
 
 import Tooltip from '@/components/tooltip.vue'
 import { getSelectionText } from '@/extensions/selection'
