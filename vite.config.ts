@@ -91,12 +91,12 @@ export default defineConfig({
   build: {
     ...buildConfig,
     commonjsOptions: {
-      include: [/html-to-docx/, /xmlbuilder2/, /node_modules/],
+      include: [/@turbodocx\/html-to-docx/, /xmlbuilder2/, /node_modules/],
       transformMixedEsModules: true
     }
   },
   optimizeDeps: {
-    exclude: ['html-to-docx'],
+    exclude: ['@turbodocx/html-to-docx'],
     include: ['xmlbuilder2'],
     esbuildOptions: {
       target: 'es2020'
@@ -105,7 +105,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': `${process.cwd()}/src`,
-      //'html-to-docx': 'html-to-docx/lib/index.js'
     },
   },
 })

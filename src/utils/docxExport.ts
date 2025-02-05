@@ -1,16 +1,7 @@
-import { convertToDocx, type DocumentOptions } from './html-to-docx-wrapper'
+import { convertToDocx } from './html-to-docx-wrapper'
+import type { UmoDocumentOptions } from './html-to-docx-wrapper'
 
-interface DocxExportOptions extends DocumentOptions {
-  orientation?: 'portrait' | 'landscape'
-  margins?: {
-    top?: number
-    right?: number
-    bottom?: number
-    left?: number
-    header?: number
-    footer?: number
-    gutter?: number
-  }
+interface DocxExportOptions extends UmoDocumentOptions {
   headerHtml?: string
   footerHtml?: string
   pageBreakClass?: string
@@ -25,13 +16,13 @@ interface DocxExportOptions extends DocumentOptions {
  * @param options - Optional configuration for the DOCX output
  * @returns Promise resolving with a Blob containing the DOCX file
  */
-export const exportHtmlToDocx = async (
-  htmlContent: string,
+export async function exportHtmlToDocx(
+  html: string,
   options: DocxExportOptions = {}
-): Promise<Blob> => {
+): Promise<Blob> {
   try {
     // Sanitize and prepare HTML content
-    let sanitizedHtml = htmlContent.trim()
+    let sanitizedHtml = html.trim()
     
     if (!sanitizedHtml) {
       throw new Error('HTML content cannot be empty')
@@ -46,42 +37,52 @@ export const exportHtmlToDocx = async (
     }
 
     // Configure conversion options
-    const convertOptions: DocumentOptions = {
-      orientation: options.orientation || 'portrait',
-      pageSize: {
-        width: options.margins?.top || 12240,    // U.S. letter width in TWIP
-        height: options.margins?.right || 15840,  // U.S. letter height in TWIP
+    const convertOptions: UmoDocumentOptions = {
+      layout: {
+        orientation: options.layout?.orientation || 'portrait',
+        pageSize: {
+          width: options.layout?.pageSize?.width || 12240,    // U.S. letter width in TWIP
+          height: options.layout?.pageSize?.height || 15840,  // U.S. letter height in TWIP
+        },
+        margins: {
+          top: options.layout?.margins?.top || 1440,
+          right: options.layout?.margins?.right || 1800,
+          bottom: options.layout?.margins?.bottom || 1440,
+          left: options.layout?.margins?.left || 1800,
+          header: options.layout?.margins?.header || 720,
+          footer: options.layout?.margins?.footer || 720,
+          gutter: options.layout?.margins?.gutter || 0,
+        },
       },
-      margins: {
-        top: options.margins?.top || 1440,
-        right: options.margins?.right || 1800,
-        bottom: options.margins?.bottom || 1440,
-        left: options.margins?.left || 1800,
-        header: options.margins?.header || 720,
-        footer: options.margins?.footer || 720,
-        gutter: options.margins?.gutter || 0,
+      fonts: {
+        main: options.fonts?.main || 'Times New Roman',
+        size: options.fonts?.size || 22, // 11pt in HIP
+        complexScriptSize: options.fonts?.complexScriptSize || 22,
       },
-      font: options.font || 'Times New Roman',
-      fontSize: options.fontSize || 22, // 11pt in HIP
-      complexScriptFontSize: options.complexScriptFontSize || 22,
       table: {
         row: {
           cantSplit: options.table?.row?.cantSplit || false,
         },
       },
-      header: !!options.headerHtml,
-      footer: !!options.footerHtml,
-      lang: options.lang || 'en-US',
-      decodeUnicode: options.decodeUnicode || true,
-      title: options.title,
-      subject: options.subject,
-      creator: options.creator || 'Umo Editor',
-      keywords: options.keywords || ['umo-editor'],
-      description: options.description,
-      lastModifiedBy: options.lastModifiedBy || 'Umo Editor',
-      revision: options.revision || 1,
-      createdAt: options.createdAt || new Date(),
-      modifiedAt: options.modifiedAt || new Date(),
+      sections: {
+        header: !!options.headerHtml,
+        footer: !!options.footerHtml,
+      },
+      localization: {
+        lang: options.localization?.lang || 'en-US',
+        decodeUnicode: options.localization?.decodeUnicode ?? true,
+      },
+      metadata: {
+        title: options.metadata?.title,
+        subject: options.metadata?.subject,
+        creator: options.metadata?.creator || 'Umo Editor',
+        keywords: options.metadata?.keywords || ['umo-editor'],
+        description: options.metadata?.description,
+        lastModifiedBy: options.metadata?.lastModifiedBy || 'Umo Editor',
+        revision: options.metadata?.revision || 1,
+        createdAt: options.metadata?.createdAt || new Date(),
+        modifiedAt: options.metadata?.modifiedAt || new Date(),
+      },
     }
 
     // Convert HTML to DOCX format
@@ -107,14 +108,11 @@ export const exportHtmlToDocx = async (
  * @param blob - The DOCX file as a Blob
  * @param filename - The name for the downloaded file
  */
-export const downloadDocx = (blob: Blob, filename: string): void => {
-  const url = window.URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename.endsWith('.docx') ? filename : `${filename}.docx`
-  
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  window.URL.revokeObjectURL(url)
+export function downloadDocx(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${filename}.docx`
+  a.click()
+  URL.revokeObjectURL(url)
 }
