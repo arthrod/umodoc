@@ -15,7 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from '@/composables/store'
 import 'prism-code-editor/prism/languages/bash'
 import 'prism-code-editor/prism/languages/css'
 import 'prism-code-editor/prism/languages/css-extras'
