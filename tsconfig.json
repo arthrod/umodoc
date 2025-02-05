@@ -4,12 +4,10 @@
     "disableSizeLimit": true,
     "target": "ESNext",
     "module": "ESNext",
-    "moduleDetection": "force",
     "strict": true,
     "allowJs": true,
     "noEmit": true,
     "jsx": "preserve",
-    "jsxImportSource": "vue",
     "moduleResolution": "bundler",
     "experimentalDecorators": true,
     "resolveJsonModule": true,
@@ -22,7 +20,6 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "bun-types",
       "vue",
       "unplugin-vue-macros/macros-global",
       "@vue-macros/reactivity-transform/macros-global",
@@ -34,13 +31,12 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/types": ["./types"],
+      "@/types": ["./types"]
     },
-    "lib": ["ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "ScriptHost"]
   },
   "vueCompilerOptions": {
+    "plugins": ["unplugin-vue-macros/volar"]
   },
   "include": [
     "*.mjs",
@@ -51,8 +47,7 @@
     "src/**/*.vue",
     "src/**/*.spec.ts",
     "src/**/*.spec.tsx",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
+    "src/**/*.d.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
