@@ -1,5 +1,4 @@
 import { withSuppress } from './functional'
-import { describe, it, expect, vi } from 'vitest'
 
 describe('withSuppress', () => {
   it('should return the value from a synchronous function without errors', () => {
@@ -19,7 +18,9 @@ describe('withSuppress', () => {
 
     const wrappedFn = withSuppress(syncFn, errorMessage)
     expect(wrappedFn()).toBeUndefined()
-    expect(consoleErrorSpy).toHaveBeenCalledWith(errorMessage, expect.any(Error))
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining(`${errorMessage}\nError: Test Error`),
+    )
 
     consoleErrorSpy.mockRestore()
   })
@@ -39,7 +40,9 @@ describe('withSuppress', () => {
 
     const wrappedFn = withSuppress(asyncFn, errorMessage)
     await expect(wrappedFn()).resolves.toBeUndefined()
-    expect(consoleErrorSpy).toHaveBeenCalledWith(errorMessage, expect.any(Error))
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining(`${errorMessage}\nError: Test Error`),
+    )
 
     consoleErrorSpy.mockRestore()
   })
@@ -54,7 +57,7 @@ describe('withSuppress', () => {
 
     const wrappedFn = withSuppress(syncFn)
     expect(wrappedFn()).toBeUndefined()
-    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error))
+    expect(consoleErrorSpy).not.toHaveBeenCalled()
 
     consoleErrorSpy.mockRestore()
   })
@@ -67,7 +70,7 @@ describe('withSuppress', () => {
 
     const wrappedFn = withSuppress(asyncFn)
     await expect(wrappedFn()).resolves.toBeUndefined()
-    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error))
+    expect(consoleErrorSpy).not.toHaveBeenCalled()
 
     consoleErrorSpy.mockRestore()
   })
