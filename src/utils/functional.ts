@@ -15,13 +15,7 @@ export function withSuppress<T extends (...args: any[]) => any>(
 ) => ReturnType<T> extends Promise<infer U>
   ? Promise<U | undefined>
   : ReturnType<T> | undefined {
-  const log = (error: unknown) => {
-    if (errorMessage) {
-      console.error(errorMessage, error)
-    } else {
-      console.error(error)
-    }
-  }
+  const log = errorMessage ? (msg: string) => console.error(msg) : null
 
   return (...args: Parameters<T>) => {
     try {
@@ -29,14 +23,16 @@ export function withSuppress<T extends (...args: any[]) => any>(
 
       if (isPromise(result)) {
         return result.catch((error) => {
-          log(error)
+          log?.(`${errorMessage}\n${error?.stack ?? error}`)
           return undefined
         })
       }
 
       return result
     } catch (error) {
-      log(error)
+      log?.(
+        `${errorMessage}\n${Reflect.get(error as Record<string, any>, 'stack') ?? error}`,
+      )
       return undefined
     }
   }
