@@ -90,7 +90,29 @@ const importWord = () => {
     // @ts-expect-error, global variable injected by script
     const { messages, value } = await mammoth.convertToHtml(
       { arrayBuffer },
-      options.value.toolbar?.importWord.options,
+      {
+        ...options.value.toolbar?.importWord.options,
+        // Ensure consistent styling conversion
+        styleMap: [
+          "p[style-name='Heading 1'] => h1:fresh",
+          "p[style-name='Heading 2'] => h2:fresh",
+          "p[style-name='Heading 3'] => h3:fresh",
+          // Handle custom paragraph alignments
+          "p[style-name='text-align-left'] => p.text-align-left:fresh",
+          "p[style-name='text-align-center'] => p.text-align-center:fresh",
+          "p[style-name='text-align-right'] => p.text-align-right:fresh",
+          // Preserve list structures
+          "p[style-name='bullet'] => ul > li:fresh",
+          "p[style-name='numbering'] => ol > li:fresh",
+        ],
+        transformDocument: (element: { type: string; children?: any[] }) => {
+          // Clean up empty paragraphs that might break round-trip
+          if (element.type === 'paragraph' && !element.children?.length) {
+            return [];
+          }
+          return element;
+        },
+      },
     )
     message.close()
     if (messages.type === 'error') {
@@ -113,8 +135,37 @@ const importWord = () => {
           }
         }
       }
+      // Enhanced post-processing of imported content
+      // Handle nested structures and clean up artifacts
+      for (const list of doc.querySelectorAll('ul, ol')) {
+        const parent = list.parentElement
+        if (parent?.tagName === 'P') {
+          parent.insertAdjacentElement('beforebegin', list)
+          if (!parent.hasChildNodes()) {
+            parent.remove()
+          }
+        }
+      }
+
+      // Preserve text alignment classes
+      for (const p of doc.querySelectorAll('p')) {
+        const style = p.getAttribute('style') || ''
+        if (style.includes('text-align: center')) {
+          p.classList.add('text-align-center')
+        } else if (style.includes('text-align: right')) {
+          p.classList.add('text-align-right')
+        } else if (style.includes('text-align: justify')) {
+          p.classList.add('text-align-justify')
+        }
+      }
+
       const content = doc.body.innerHTML.toString()
-      editor.value?.commands.setContent(content)
+      
+      // Set content with proper sanitization
+      editor.value?.commands.setContent(content, {
+        preserveWhitespace: true,
+        preserveMarks: true,
+      })
     } catch {
       useMessage('error', t('base.importWord.importError'))
     }
