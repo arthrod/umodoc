@@ -27,7 +27,6 @@
 
 <script setup lang="ts">
 import { Editor, EditorContent, type Extension } from '@tiptap/vue-3'
-import { useStore } from '@/composables/store'
 
 import { extensions, inputAndPasteRules } from '@/extensions'
 
