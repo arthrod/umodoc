@@ -6,7 +6,7 @@ const testConfig = defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: [],
+    setupFiles: ['./src/test/setup.ts'],
     coverage: {
       include: ['src'],
       exclude: ['**/*.spec.*', '**/*.d.ts', 'src/types.ts', 'testing/*'],
@@ -25,3 +25,4 @@ const testConfig = defineConfig({
 })
 
 export default mergeConfig(viteConfig, testConfig)
+

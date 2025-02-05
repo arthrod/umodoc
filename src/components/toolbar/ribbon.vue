@@ -221,6 +221,7 @@
           <div class="umo-virtual-group">
             <menus-toolbar-export-image />
             <menus-toolbar-export-pdf v-if="!disableItem('exportPDF')" />
+            <menus-toolbar-export-word v-if="!disableItem('exportDOCX')" />
             <menus-toolbar-export-text />
           </div>
           <div class="umo-virtual-group">
