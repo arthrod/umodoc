@@ -88,7 +88,6 @@
 
 <script setup lang="ts">
 import { getSelectionText } from '@/extensions/selection'
-import { useStore } from '@/composables/store'
 const { editor, searchReplace } = useStore()
 
 let searchText = $ref<string>('')
