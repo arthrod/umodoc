@@ -21,7 +21,6 @@
     "verbatimModuleSyntax": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "plugins": [{ "name": "ts-vue-plugin" }],
     "types": [
       "bun-types",
       "vue",
@@ -54,7 +53,6 @@
     "src/**/*.spec.tsx",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "test/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

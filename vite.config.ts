@@ -1,12 +1,13 @@
 import Vue from '@vitejs/plugin-vue'
 import ReactivityTransform from '@vue-macros/reactivity-transform/vite'
 import type { RollupWarning } from 'rollup'
+import AutoImport from 'unplugin-auto-import/vite'
+import { TDesignResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import VueMacros from 'unplugin-vue-macros/vite'
 import { defineConfig } from 'vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import tsConfigPaths from 'vite-tsconfig-paths'
-import path from 'node:path'
 
 import pkg from './package.json'
 import copyright from './src/utils/copyright'
@@ -18,23 +19,22 @@ const vuePlugins = {
       vue: Vue(),
     },
   }),
-  // AutoImport: AutoImport({
-  //   dirs: ['./src/composables'],
-  //   imports: ['vue', '@vueuse/core'],
-  //   // resolvers: [TDesignResolver({ library: 'vue-next', esm: true })],
-  //   dts: './types/imports.d.ts',
-  // }),
+  AutoImport: AutoImport({
+    dirs: ['./src/composables'],
+    imports: ['vue', '@vueuse/core'],
+    resolvers: [TDesignResolver({ library: 'vue-next', esm: true })],
+    dts: './types/imports.d.ts',
+  }),
   Components: Components({
     directoryAsNamespace: true,
     dirs: ['./src/components'],
-    // resolvers: [TDesignResolver({ library: 'vue-next', esm: true })],
+    resolvers: [TDesignResolver({ library: 'vue-next', esm: true })],
     dts: './types/components.d.ts',
   }),
   SvgIcons: createSvgIconsPlugin({
-    iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+    iconDirs: [`${process.cwd()}/src/assets/icons`],
     symbolId: 'umo-icon-[name]',
     customDomId: 'umo-icons',
-    inject: 'body-last',
   }),
 }
 
@@ -88,20 +88,7 @@ export default defineConfig({
     ...Object.values(vuePlugins),
   ],
   css: cssConfig,
-  build: {
-    ...buildConfig,
-    commonjsOptions: {
-      include: [/@turbodocx\/html-to-docx/, /xmlbuilder2/, /node_modules/],
-      transformMixedEsModules: true
-    }
-  },
-  optimizeDeps: {
-    exclude: ['@turbodocx/html-to-docx'],
-    include: ['xmlbuilder2'],
-    esbuildOptions: {
-      target: 'es2020'
-    }
-  },
+  build: buildConfig,
   resolve: {
     alias: {
       '@': `${process.cwd()}/src`,

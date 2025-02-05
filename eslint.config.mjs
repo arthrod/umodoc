@@ -1,6 +1,6 @@
 import eslint from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
-import tseslint from 'typescript-eslint'
+import tseslint from '@typescript-eslint/eslint-plugin'
 import eslintPluginVue from 'eslint-plugin-vue'
 import tsParser from '@typescript-eslint/parser'
 import { readFileSync } from 'node:fs'
