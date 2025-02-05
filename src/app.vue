@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { shortId } from '@/utils/short-id'
 
-// import { UmoEditor } from '../dist/umo-editor'
+import { UmoEditor } from '../dist/umo-editor'
 
 const editorRef = $ref(null)
 const templates = [

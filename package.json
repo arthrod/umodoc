@@ -45,19 +45,21 @@
   },
   "types": "./types/index.d.ts",
   "scripts": {
-    "build": "vue-tsc --noEmit && vite build",
-    "dev": "vite --port 9000 --open --force",
-    "format": "prettier --write .",
-    "check:code": "eslint --cache src",
-    "check:style": "stylelint src/**/*.{css,less,vue}",
-    "check:types": "vue-tsc --noEmit",
-    "lint:code": "eslint --cache --fix src",
-    "lint:style": "stylelint --fix src/**/*.{css,less,vue}",
-    "test": "NODE_NO_WARNINGS=1 vitest",
-    "test:coverage": "npm run test --coverage",
-    "test:watch": "npm run test --watch --coverage",
-    "prepare": "husky",
-    "prepublishOnly": "npm run build"
+    "build": "bun run vue-tsc --noEmit && bun run vite build",
+    "dev": "bun run vite --port 9000 --open --force",
+    "format": "bun run prettier --write .",
+    "check:code": "bun run eslint src",
+    "check:style": "bun run stylelint src/**/*.{css,less,vue}",
+    "check:types": "bun run vue-tsc --noEmit",
+    "lint:code": "bun run eslint --cache --fix src",
+    "lint:style": "bun run stylelint --fix src/**/*.{css,less,vue}",
+    "lint": "bun run eslint .",
+    "lint:fix": "bun run eslint . --fix",
+    "test": "NODE_NO_WARNINGS=1 bun run vitest",
+    "test:coverage": "bun run test --coverage",
+    "test:watch": "bun run test --watch --coverage",
+    "prepare": "bun run husky",
+    "prepublishOnly": "bun run build"
   },
   "dependencies": {
     "@eslint/object-schema": "^2.1.4",
@@ -95,19 +97,25 @@
     "@tiptap/starter-kit": "^2.6.6",
     "@tiptap/vue-3": "^2.6.6",
     "@tool-belt/type-predicates": "^1.3.0",
+    "@types/bun": "^1.2.2",
+    "@types/html-docx-js": "^0.3.4",
     "@types/svg64": "^1.1.2",
     "@umoteam/editor-external": "4.5.0",
     "@vue-monaco/editor": "^0.0.6",
+    "@vue/compiler-sfc": "^3.5.13",
     "@vueuse/core": "^11.0.3",
     "buffer-image-size": "^0.6.4",
+    "bun-types": "^1.2.2",
     "docx": "^8.5.0",
     "dom-to-image-more": "^3.4.3",
     "es-drager": "^1.2.11",
     "file-saver": "^2.0.5",
     "file64": "^1.0.4",
     "hotkeys-js": "^3.13.7",
+    "html-docx-js": "^0.3.1",
     "jsbarcode": "^3.11.6",
     "katex": "^0.16.11",
+    "mammoth": "^1.6.0",
     "mermaid": "^11.2.0",
     "nzh": "^1.0.13",
     "plyr": "^3.7.8",
@@ -138,7 +146,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/node": "^22.5.4",
     "@types/qrcode-svg": "^1.1.5",
-    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.23.0",
     "@typescript-eslint/parser": "^8.5.0",
     "@vitejs/plugin-vue": "^4.6.2",
     "@vue-macros/reactivity-transform": "^1.0.4",
@@ -175,7 +183,9 @@
     "vite-plugin-svg-icons": "^2.0.1",
     "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.0.5",
-    "vue": "^3.0.11",
+    "vue": "^3.5.13",
+    "@vue/runtime-core": "^3.5.13",
+    "@vue/runtime-dom": "^3.5.13",
     "vue-tsc": "^2.1.6"
   },
   "engines": {
@@ -191,5 +201,9 @@
     "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue}": [
       "eslint --fix src"
     ]
-  }
+  },
+  "trustedDependencies": [
+    "core-js",
+    "protobufjs"
+  ]
 }
