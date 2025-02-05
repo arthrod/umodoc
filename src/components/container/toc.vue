@@ -25,7 +25,7 @@
         @click="headingClick(item as unknown as TableOfContentItem)"
       >
         <div class="umo-toc-text">
-          {{ item.title || item.textContent || `Heading ${item.level}` }}
+          {{ item.title ?? item.textContent }}
         </div>
       </div>
     </div>
