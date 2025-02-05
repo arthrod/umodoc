@@ -3,17 +3,14 @@ import stylistic from '@stylistic/eslint-plugin'
 import tseslint from 'typescript-eslint'
 import eslintPluginVue from 'eslint-plugin-vue'
 import tsParser from '@typescript-eslint/parser'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 import eslintConfigPrettier from 'eslint-config-prettier'
-<<<<<<< Updated upstream
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports'
 import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 import eslintTS from 'typescript-eslint'
 import pluginVitest from '@vitest/eslint-plugin'
-=======
->>>>>>> Stashed changes
 
 const componentsContent = readFileSync('./types/components.d.ts', 'utf8')
 const importsContent = readFileSync('./types/imports.d.ts', 'utf8')
@@ -56,7 +53,6 @@ export default tseslint.config(
         useMessage: true,
         useFileDialog: true,
         useStorage: true,
-        createGlobalState: true,
         t: true,
       },
       parserOptions: {
@@ -104,7 +100,6 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': 'off',
     },
   },
-<<<<<<< Updated upstream
   // {
   //   files: [
   //     '**/*.{spec,test}.{ts,tsx}',
@@ -123,8 +118,5 @@ export default tseslint.config(
     ],
     ...pluginVitest.configs.recommended,
   },
-=======
-  // Prettier integration (keep this last)
->>>>>>> Stashed changes
   eslintConfigPrettier,
 )

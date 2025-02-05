@@ -1,105 +1,98 @@
-import { convertToDocx } from './html-to-docx-wrapper'
-import type { UmoDocumentOptions } from './html-to-docx-wrapper'
+import { Node } from 'prosemirror-model';
+import { serializeToDocx } from './docxSerializer';
 
-interface DocxExportOptions extends UmoDocumentOptions {
-  headerHtml?: string
-  footerHtml?: string
-  pageBreakClass?: string
-  listStyleTypes?: {
-    ordered?: 'decimal' | 'upper-alpha' | 'lower-alpha' | 'upper-roman' | 'lower-roman' | 'decimal-bracket-end' | 'decimal-bracket'
-  }
+interface DocxExportOptions {
+  metadata?: {
+    title?: string;
+    author?: string;
+    subject?: string;
+    keywords?: string[];
+    description?: string;
+    lastModifiedBy?: string;
+    revision?: number;
+    created?: Date;
+    modified?: Date;
+  };
+  layout?: {
+    pageSize?: {
+      width: number;  // in twips (1/20th of a point)
+      height: number;
+    };
+    margins?: {
+      top: number;
+      right: number;
+      bottom: number;
+      left: number;
+    };
+    orientation?: 'portrait' | 'landscape';
+  };
 }
 
 /**
- * Converts HTML content to a DOCX file with enhanced features
- * @param htmlContent - The HTML string to convert
+ * Converts a ProseMirror document directly to DOCX format
+ * @param doc - The ProseMirror document node to convert
  * @param options - Optional configuration for the DOCX output
  * @returns Promise resolving with a Blob containing the DOCX file
  */
-export async function exportHtmlToDocx(
-  html: string,
+export async function exportToDocx(
+  doc: Node,
   options: DocxExportOptions = {}
 ): Promise<Blob> {
   try {
-    // Sanitize and prepare HTML content
-    let sanitizedHtml = html.trim()
-    
-    if (!sanitizedHtml) {
-      throw new Error('HTML content cannot be empty')
+    if (!doc) {
+      throw new Error('Document cannot be empty');
     }
 
-    // Handle page breaks
-    if (options.pageBreakClass) {
-      sanitizedHtml = sanitizedHtml.replace(
-        new RegExp(`<div class="${options.pageBreakClass}"[^>]*>.*?</div>`, 'g'),
-        '<div style="page-break-after: always;"></div>'
-      )
-    }
+    // Default page settings for US Letter
+    const defaultPageSize = {
+      width: 12240,  // 8.5 inches in twips
+      height: 15840  // 11 inches in twips
+    };
 
-    // Configure conversion options
-    const convertOptions: UmoDocumentOptions = {
+    const defaultMargins = {
+      top: 1440,     // 1 inch in twips
+      right: 1440,
+      bottom: 1440,
+      left: 1440
+    };
+
+    // Merge options with defaults
+    const exportOptions = {
+      metadata: {
+        title: options.metadata?.title || 'Untitled Document',
+        author: options.metadata?.author || 'Unknown',
+        subject: options.metadata?.subject || '',
+        keywords: options.metadata?.keywords || [],
+        description: options.metadata?.description || '',
+        lastModifiedBy: options.metadata?.lastModifiedBy || options.metadata?.author || 'Unknown',
+        revision: options.metadata?.revision || 1,
+        created: options.metadata?.created || new Date(),
+        modified: options.metadata?.modified || new Date()
+      },
       layout: {
-        orientation: options.layout?.orientation || 'portrait',
         pageSize: {
-          width: options.layout?.pageSize?.width || 12240,    // U.S. letter width in TWIP
-          height: options.layout?.pageSize?.height || 15840,  // U.S. letter height in TWIP
+          ...defaultPageSize,
+          ...options.layout?.pageSize
         },
         margins: {
-          top: options.layout?.margins?.top || 1440,
-          right: options.layout?.margins?.right || 1800,
-          bottom: options.layout?.margins?.bottom || 1440,
-          left: options.layout?.margins?.left || 1800,
-          header: options.layout?.margins?.header || 720,
-          footer: options.layout?.margins?.footer || 720,
-          gutter: options.layout?.margins?.gutter || 0,
+          ...defaultMargins,
+          ...options.layout?.margins
         },
-      },
-      fonts: {
-        main: options.fonts?.main || 'Times New Roman',
-        size: options.fonts?.size || 22, // 11pt in HIP
-        complexScriptSize: options.fonts?.complexScriptSize || 22,
-      },
-      table: {
-        row: {
-          cantSplit: options.table?.row?.cantSplit || false,
-        },
-      },
-      sections: {
-        header: !!options.headerHtml,
-        footer: !!options.footerHtml,
-      },
-      localization: {
-        lang: options.localization?.lang || 'en-US',
-        decodeUnicode: options.localization?.decodeUnicode ?? true,
-      },
-      metadata: {
-        title: options.metadata?.title,
-        subject: options.metadata?.subject,
-        creator: options.metadata?.creator || 'Umo Editor',
-        keywords: options.metadata?.keywords || ['umo-editor'],
-        description: options.metadata?.description,
-        lastModifiedBy: options.metadata?.lastModifiedBy || 'Umo Editor',
-        revision: options.metadata?.revision || 1,
-        createdAt: options.metadata?.createdAt || new Date(),
-        modifiedAt: options.metadata?.modifiedAt || new Date(),
-      },
-    }
+        orientation: options.layout?.orientation || 'portrait'
+      }
+    };
 
-    // Convert HTML to DOCX format
-    const docxBuffer = await convertToDocx(
-      sanitizedHtml,
-      options.headerHtml || null,
-      convertOptions
-    )
+    // Convert document using the direct serializer
+    const buffer = await serializeToDocx(doc, exportOptions);
 
-    return new Blob([docxBuffer], {
+    return new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    })
+    });
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Failed to convert HTML to DOCX: ${error.message}`)
+      throw new Error(`Failed to convert document to DOCX: ${error.message}`);
     }
-    throw new Error('An unexpected error occurred during DOCX conversion')
+    throw new Error('An unexpected error occurred during DOCX conversion');
   }
 }
 

@@ -1,3 +1,4 @@
+import { ref, watch } from 'vue'
 import type { Mark } from '@tiptap/pm/model'
 import type { Editor } from '@tiptap/vue-3'
 import type { TableOfContentDataItem } from '@tiptap-pro/extension-table-of-contents'
@@ -6,6 +7,7 @@ import { isRecord } from '@tool-belt/type-predicates'
 import { defaultOptions, ojbectSchema } from '@/options'
 import type { PageOption, UmoEditorOptions } from '@/types'
 import { shortId } from '@/utils/short-id'
+import { createGlobalState, useState } from '@vueuse/core'
 
 export type TableOfContentItem = TableOfContentDataItem & { title: string }
 

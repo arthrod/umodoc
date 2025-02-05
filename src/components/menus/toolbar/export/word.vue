@@ -12,7 +12,7 @@
 import { ref } from '@vue/reactivity'
 import { useStore } from '@/composables/store'
 import { useI18n } from 'vue-i18n'
-import { exportHtmlToDocx, downloadDocx } from '@/utils/docxExport'
+import { exportToDocx, downloadDocx } from '@/utils/docxExport'
 
 const store = useStore()
 const { t } = useI18n()
@@ -23,22 +23,29 @@ const handleExport = async () => {
   
   isExporting.value = true
   try {
-    // Get current editor content as HTML
-    const htmlContent = store.editor.value.getHTML()
+    // Get current editor state
+    const doc = store.editor.value.state.doc
     
-    // Configure export options based on current page settings
+    // Configure export options based on current page settings and metadata
     const exportOptions = {
-      orientation: store.page.value.orientation,
-      margins: {
-        top: store.page.value.margin?.top,
-        right: store.page.value.margin?.right,
-        bottom: store.page.value.margin?.bottom,
-        left: store.page.value.margin?.left
+      metadata: {
+        title: store.options.value.document?.title || 'Untitled Document',
+        author: store.options.value.document?.author,
+        modified: new Date()
+      },
+      layout: {
+        orientation: store.page.value.orientation,
+        margins: {
+          top: store.page.value.margin?.top || 1440,
+          right: store.page.value.margin?.right || 1440,
+          bottom: store.page.value.margin?.bottom || 1440,
+          left: store.page.value.margin?.left || 1440
+        }
       }
     }
 
-    // Convert HTML to DOCX
-    const docxBlob = await exportHtmlToDocx(htmlContent, exportOptions)
+    // Convert ProseMirror doc directly to DOCX
+    const docxBlob = await exportToDocx(doc, exportOptions)
 
     // Generate filename from document title or use default
     const filename = store.options.value.document?.title || 'document'

@@ -1,62 +1,67 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { exportHtmlToDocx } from '../src/utils/docxExport';
-import type { UmoDocumentOptions } from '../src/utils/html-to-docx-wrapper';
-import * as htmlToDocxWrapper from '../src/utils/html-to-docx-wrapper';
+import { exportToDocx } from '../src/utils/docxExport';
+import { Schema, Node } from 'prosemirror-model';
+
+// Create a basic schema for testing
+const schema = new Schema({
+  nodes: {
+    doc: {
+      content: 'paragraph+'
+    },
+    paragraph: {
+      content: 'text*',
+      toDOM() { return ['p', 0] }
+    },
+    text: {
+      group: 'inline'
+    }
+  }
+});
 
 // Create mock module
 const mockConvertToDocx = vi.fn().mockImplementation((html) => {
   return Promise.resolve(new Uint8Array([1, 2, 3, 4]));
 });
 
-// Mock the module
-vi.spyOn(htmlToDocxWrapper, 'convertToDocx').mockImplementation(mockConvertToDocx);
-
-describe('exportHtmlToDocx', () => {
+describe('exportToDocx', () => {
   beforeEach(() => {
     mockConvertToDocx.mockClear();
   });
-
-  it('should convert HTML to DOCX', async () => {
-    const html = '<p>Test content</p>';
-    const result = await exportHtmlToDocx(html);
+  
+  it('should convert document to DOCX', async () => {
+    const doc = schema.node('doc', {}, [
+      schema.node('paragraph', {}, [
+        schema.text('Test content')
+      ])
+    ]);
+    const result = await exportToDocx(doc);
     expect(result).toBeInstanceOf(Blob);
-    expect(mockConvertToDocx).toHaveBeenCalledWith(html, null, expect.any(Object));
   });
 
-  it('should handle empty content', async () => {
-    const htmlContent = '';
-    await expect(exportHtmlToDocx(htmlContent)).rejects.toThrow('HTML content cannot be empty');
+  it('should handle empty document', async () => {
+    const emptyDoc = null as unknown as Node;
+    await expect(exportToDocx(emptyDoc)).rejects.toThrow('Document cannot be empty');
   });
 
   it('should handle export options', async () => {
-    const htmlContent = '<p>Test Content</p>';
-    const options: UmoDocumentOptions = {
+    const doc = schema.node('doc', {}, [
+      schema.node('paragraph', {}, [
+        schema.text('Test content')
+      ])
+    ]);
+    const options = {
+      metadata: {
+        title: 'Test Document',
+        author: 'Test Author'
+      },
       layout: {
-        orientation: 'landscape' as const,
-        margins: {
-          top: 100,
-          right: 100,
-          bottom: 100,
-          left: 100
+        pageSize: {
+          width: 12240,
+          height: 15840
         }
       }
     };
-    const docxBlob = await exportHtmlToDocx(htmlContent, options);
+    const docxBlob = await exportToDocx(doc, options);
     expect(docxBlob).toBeInstanceOf(Blob);
-    expect(mockConvertToDocx).toHaveBeenCalledWith(
-      htmlContent,
-      null,
-      expect.objectContaining({
-        layout: expect.objectContaining({
-          orientation: 'landscape',
-          margins: expect.objectContaining({
-            top: 100,
-            right: 100,
-            bottom: 100,
-            left: 100
-          })
-        })
-      })
-    );
   });
 });

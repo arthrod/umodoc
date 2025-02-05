@@ -8,12 +8,8 @@
     "strict": true,
     "allowJs": true,
     "noEmit": true,
-<<<<<<< Updated upstream
     "jsx": "preserve",
     "jsxImportSource": "vue",
-=======
-    "jsx": "react-jsx",
->>>>>>> Stashed changes
     "moduleResolution": "bundler",
     "experimentalDecorators": true,
     "resolveJsonModule": true,
@@ -42,12 +38,8 @@
       "@/types": ["./types"],
     },
     "lib": ["ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
-<<<<<<< Updated upstream
     "allowImportingTsExtensions": true,
     "isolatedModules": true
-=======
-    "allowImportingTsExtensions": true
->>>>>>> Stashed changes
   },
   "vueCompilerOptions": {
   },
@@ -61,11 +53,8 @@
     "src/**/*.spec.ts",
     "src/**/*.spec.tsx",
     "src/**/*.d.ts",
-<<<<<<< Updated upstream
     "src/**/*.tsx",
-=======
-    "node_modules/vue/dist/vue.d.ts"
->>>>>>> Stashed changes
+    "test/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

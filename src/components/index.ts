@@ -18,7 +18,6 @@ const useUmoEditor = {
   },
 }
 
-<<<<<<< Updated upstream
 export {
   UmoEditor as default,
   UmoDialog,
@@ -27,6 +26,3 @@ export {
   UmoTooltip,
   useUmoEditor,
 }
-=======
-export { useUmoEditor, UmoEditor, UmoMenuButton, UmoDialog, UmoTooltip }
->>>>>>> Stashed changes
