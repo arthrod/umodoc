@@ -47,7 +47,7 @@ const buildConfig = {
   },
   outDir: 'dist',
   copyPublicDir: false,
-  minify: 'esbuild' as const,
+  minify: false,
   cssMinify: true,
   rollupOptions: {
     output: [

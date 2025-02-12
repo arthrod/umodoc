@@ -12,9 +12,12 @@ const mockAnchor = {
   click: vi.fn(),
 } as unknown as HTMLAnchorElement
 
+// Store the original createElement method
+const originalCreateElement = document.createElement.bind(document)
+
 global.document.createElement = vi.fn((tag: string) => {
   if (tag === 'a') {
     return mockAnchor
   }
-  return document.createElement(tag)
+  return originalCreateElement(tag)
 }) 

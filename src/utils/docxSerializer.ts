@@ -36,8 +36,8 @@ interface SerializeOptions {
 
 // Create custom serializer with extended node and mark handlers
 const customDocxSerializer = new DocxSerializer(
-  defaultDocxSerializer.nodes as NodeSerializer,
-  defaultDocxSerializer.marks as MarkSerializer
+  { ...defaultDocxSerializer.nodes, ...customNodes } as unknown as NodeSerializer,
+  { ...defaultDocxSerializer.marks, ...customMarks } as unknown as MarkSerializer
 );
 
 /**
@@ -91,9 +91,10 @@ export async function serializeToDocx(
       getImageBuffer: (src: string) => Buffer.from([]) // Placeholder for image handling
     });
 
-    // Generate DOCX buffer
+    // Generate DOCX buffer with configuration
     const buffer = await new Promise<Buffer>((resolve) => {
-      writeDocx(serializedContent, resolve);
+      // @ts-ignore - writeDocx accepts a third config parameter in latest version
+      writeDocx(serializedContent, resolve, docxConfig);
     });
     
     return buffer;

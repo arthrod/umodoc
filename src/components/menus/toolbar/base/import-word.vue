@@ -91,7 +91,7 @@ const importWord = () => {
     const { messages, value } = await mammoth.convertToHtml(
       { arrayBuffer },
       {
-        ...options.value.toolbar?.importWord.options,
+        ...(options.value.toolbar?.importWord?.options || {}),
         // Ensure consistent styling conversion
         styleMap: [
           "p[style-name='Heading 1'] => h1:fresh",
@@ -115,10 +115,12 @@ const importWord = () => {
       },
     )
     message.close()
-    if (messages.type === 'error') {
+    const errorMessages = messages.filter((msg: any) => msg.type === 'error')
+    if (errorMessages.length > 0) {
+      const errorMessage = errorMessages.map((msg: any) => msg.message).join(', ')
       useMessage(
         'error',
-        `${t('base.importWord.convertError')} (${messages.message})`,
+        `${t('base.importWord.convertError')} (${errorMessage})`,
       )
       return
     }

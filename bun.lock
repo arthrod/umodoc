@@ -6,6 +6,7 @@
       "dependencies": {
         "@eslint/object-schema": "^2.1.4",
         "@imgly/background-removal": "1.5.5",
+        "@ljharb/tsconfig": "^0.2.3",
         "@tiptap/core": "^2.6.6",
         "@tiptap/extension-bold": "^2.6.6",
         "@tiptap/extension-bubble-menu": "^2.6.6",
@@ -312,6 +313,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.0", "", {}, "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ=="],
 
     "@keyv/serialize": ["@keyv/serialize@1.0.2", "", { "dependencies": { "buffer": "^6.0.3" } }, "sha512-+E/LyaAeuABniD/RvUezWVXKpeuvwLEA9//nE9952zBaOdBd2mQ3pPoM8cUe2X6IcMByfuSLzmYqnYshG60+HQ=="],
+
+    "@ljharb/tsconfig": ["@ljharb/tsconfig@0.2.3", "", {}, "sha512-HTbxkQE14LSMHb4xp567ALgMbuXhX7etB0jFQiW8AMHRMn/MPI6qFNK2Kj4/sG27FZipizrSOCghrJNpVfCCKw=="],
 
     "@manypkg/find-root": ["@manypkg/find-root@1.1.0", "", { "dependencies": { "@babel/runtime": "^7.5.5", "@types/node": "^12.7.1", "find-up": "^4.1.0", "fs-extra": "^8.1.0" } }, "sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA=="],
 
