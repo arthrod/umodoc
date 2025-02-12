@@ -18,7 +18,7 @@
         :max-height="maxHeight"
         :equal-proportion="true"
         @resize="onResize"
-        @click="selected = true"
+        @focus="selected = true"
       >
         <video
           ref="videoRef"
@@ -71,10 +71,10 @@ onMounted(async () => {
   player = mediaPlayer(videoRef)
   if (node.attrs.uploaded === false && node.attrs.file) {
     try {
-      const { id,url } =
+      const { id, url } =
         (await options.value?.onFileUpload?.(node.attrs.file)) ?? {}
       if (containerRef.value) {
-        updateAttributes({ id,src: url, file: null, uploaded: true })
+        updateAttributes({ id, src: url, file: null, uploaded: true })
       }
     } catch (error) {
       useMessage('error', (error as Error).message)

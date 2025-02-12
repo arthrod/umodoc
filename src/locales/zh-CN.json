@@ -139,7 +139,8 @@
     "image": "图片",
     "link": {
       "text": "链接",
-      "submit": "确定",
+      "insert": "插入",
+      "remove": "移除",
       "hrefText": "链接文本：",
       "hrefTextTip": "请输入或选中链接文本",
       "href": "链接地址：",
@@ -280,6 +281,40 @@
       "placeholder": "请输入 Mermaid 代码",
       "preview": "预览",
       "notEmpty": "Mermaid 内容不能为空"
+    },
+    "echarts": {
+      "text": "图表",
+      "add": "新建图表",
+      "edit": "更改图表",
+      "source": "高级模式",
+      "visualization": "基础模式",
+      "placeholder": "请输入 echarts 格式的数据",
+      "sourceerror": "echarts 结构不正确，请确认！",
+      "sourceerror2": "echarts 结构不正确或未定义！",
+      "dataGrid": "数据",
+      "setting": "设置",
+      "settingerror": "请确认预览视图是否正确显示！",
+      "set": {
+        "bar": "柱状图",
+        "line": "折线图",
+        "pie": "饼图",
+        "top": "顶部",
+        "bottom": "底部",
+        "left": "居左",
+        "center": "居中",
+        "right": "居右",
+        "horizontal": "水平",
+        "vertical": "垂直",
+        "smooth": "平滑折线",
+        "seriesType": "图表类型",
+        "legend": "显示图例",
+        "legendorient": "图例布局",
+        "legendlocation": "图例纵向位置",
+        "legendleft": "图例横向位置",
+        "titleText": "标题名称",
+        "titleTextPlaceholder": "请输入标题名称...",
+        "titleleft": "标题位置"
+      }
     },
     "mindMap": "思维导图",
     "qrcode": {
@@ -498,9 +533,6 @@
       "title": "错误提示",
       "message": "AI 文档助手生成结果出现错误，请重试！"
     }
-  },
-  "comment": {
-    "text": "批注/评论"
   },
   "pageOptions": {
     "title": "页面设置",

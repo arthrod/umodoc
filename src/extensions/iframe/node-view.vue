@@ -17,7 +17,7 @@
         :min-height="200"
         :max-width="maxWidth"
         @resize="onResize"
-        @click="selected = true"
+        @focus="selected = true"
       >
         <iframe :src="node.attrs.src"></iframe>
       </drager>
@@ -30,7 +30,6 @@ import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 import Drager from 'es-drager'
 
 const { node, updateAttributes } = defineProps(nodeViewProps)
-const { editor } = useStore()
 const containerRef = ref(null)
 let selected = $ref(false)
 let maxWidth = $ref(0)
@@ -48,7 +47,8 @@ const nodeStyle = $computed(() => {
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick()
   if (containerRef.value) {
     const { offsetWidth } = containerRef.value.$el
 

@@ -151,6 +151,7 @@
         </div>
         <div class="umo-virtual-group">
           <menus-toolbar-tools-diagrams v-if="!disableItem('diagrams')" />
+          <menus-toolbar-tools-echarts v-if="!disableItem('echarts')" />
           <!-- <menus-toolbar-tools-mind-map v-if="!disableItem('mind-map')" /> -->
           <menus-toolbar-tools-mermaid v-if="!disableItem('mermaid')" />
         </div>
