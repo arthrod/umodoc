@@ -33,11 +33,6 @@ vitest.config.ts.timestamp*
 # Husky
 .husky/_
 
-# Lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
 # Other
 .DS_Store
 Thumbs.db
