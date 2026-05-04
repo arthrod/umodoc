@@ -33,10 +33,6 @@ vitest.config.ts.timestamp*
 # Husky
 .husky/_
 
-# Auto Imports
-types/imports.d.ts
-types/components.d.ts
-
 # Lock files
 package-lock.json
 yarn.lock
