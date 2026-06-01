@@ -89,9 +89,11 @@ export function createTable(
 
   const rows: ProsemirrorNode[] = []
 
+  const withHeaderRowNumber = Number(withHeaderRow)
+  rowsCount = rowsCount + withHeaderRowNumber
+
   for (let index = 0; index < rowsCount; index += 1) {
-    if ([1, rowsCount - 1].includes(index)) {
-      console.log(cells2)
+    if ([withHeaderRowNumber, rowsCount - 1].includes(index)) {
       rows.push(types.row.createChecked({ class: 'hide-render' }, cells2))
       continue
     }
